@@ -291,13 +291,17 @@ dbsa-postgres-1   postgres:18.6   "docker-entrypoint.s…"   postgres   2 days a
 
 Підключення pgAdmin: сервер localhost, порт 5432, база dbsa, користувач student.
 
-Перевірка тому: команди `docker compose down` і `docker compose up -d`, стан таблиць після перезапуску.
+Перевірка тому: виконано `docker compose down` і `docker compose up -d`. Після перезапуску в базі dbsa у схемі public лишилося 9 таблиць, дані не втрачено.
 
 
 ## 8. Створення схеми
 
 - Міграція 001: [migrations/001_create_schema.up.sql](migrations/001_create_schema.up.sql), [migrations/001_create_schema.down.sql](migrations/001_create_schema.down.sql)
-- Рішення, яких не видно з діаграми: умови CHECK, реакції на видалення, стовпці ідентичності.
+- Первинні ключі всіх таблиць - стовпці ідентичності `GENERATED ALWAYS AS IDENTITY`: код видає СУБД, а не користувач.
+- Умови CHECK: `price > 0`, `stock_quantity >= 0`, `quantity > 0` (в обох позиціях), `purchase_price > 0`, `sale_price > 0` і `status IN ('нове', 'оплачене', 'відправлене', 'скасоване')`.
+- Унікальність: `article` у товарів і `email` у клієнтів.
+- Реакції на видалення: `ON DELETE CASCADE` для позицій замовлення і позицій поставки (позиція не існує без замовлення чи поставки), для всіх інших зовнішніх ключів - `ON DELETE RESTRICT`.
+
 
 ## 9. Перевірка обмежень
 
