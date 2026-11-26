@@ -277,8 +277,21 @@ erDiagram
 
 ## 7. Середовище
 
+Операційна система: Windows 11.
+
+```powershell
+docker compose up -d
+docker compose ps
+```
+
+```text
 NAME              IMAGE           COMMAND                  SERVICE    CREATED      STATUS         PORTS
 dbsa-postgres-1   postgres:18.6   "docker-entrypoint.s…"   postgres   2 days ago   Up 8 seconds   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+```
+
+Підключення pgAdmin: сервер localhost, порт 5432, база dbsa, користувач student.
+
+Перевірка тому: команди `docker compose down` і `docker compose up -d`, стан таблиць після перезапуску.
 
 
 ## 8. Створення схеми
