@@ -94,7 +94,7 @@ erDiagram
 - **Позиція поставки** - окремий товар у поставці із кількістю та закупівельною ціною.
 - **Клієнт** - покупець, який оформлює замовлення.
 - **Замовлення** - покупка клієнта зі статусом (нове, оплачене, відправлене, скасоване).
-- **Позиція замовлення** - окремий товар у замовленні з кількістю та ціною продажу.### Звʼязки
+- **Позиція замовлення** - окремий товар у замовленні з кількістю та ціною продажу.
 
 ### Звʼязки
 
@@ -322,11 +322,73 @@ dbsa-postgres-1   postgres:18.6   "docker-entrypoint.s…"   postgres   2 days a
 Результат скрипта перевірки схеми в базі dbsa_check після виконання файлів up:
 
 ```text
-вставити результат разом із заголовками стовпців
+"table_name"	"kind"	"name"	"definition"
+"brands"	"стовпець"	"brand_id"	"integer NOT NULL GENERATED AS IDENTITY"
+"brands"	"стовпець"	"brand_name"	"text NOT NULL"
+"brands"	"PRIMARY KEY"	"brands_pkey"	"PRIMARY KEY (brand_id)"
+"categories"	"стовпець"	"category_id"	"integer NOT NULL GENERATED AS IDENTITY"
+"categories"	"стовпець"	"category_name"	"text NOT NULL"
+"categories"	"PRIMARY KEY"	"categories_pkey"	"PRIMARY KEY (category_id)"
+"customers"	"стовпець"	"customer_id"	"integer NOT NULL GENERATED AS IDENTITY"
+"customers"	"стовпець"	"customer_name"	"text NOT NULL"
+"customers"	"стовпець"	"email"	"text NOT NULL"
+"customers"	"PRIMARY KEY"	"customers_pkey"	"PRIMARY KEY (customer_id)"
+"customers"	"UNIQUE"	"customers_email_key"	"UNIQUE (email)"
+"order_items"	"стовпець"	"order_item_id"	"integer NOT NULL GENERATED AS IDENTITY"
+"order_items"	"стовпець"	"quantity"	"integer NOT NULL"
+"order_items"	"стовпець"	"sale_price"	"numeric NOT NULL"
+"order_items"	"стовпець"	"order_id"	"integer NOT NULL"
+"order_items"	"стовпець"	"product_id"	"integer NOT NULL"
+"order_items"	"PRIMARY KEY"	"order_items_pkey"	"PRIMARY KEY (order_item_id)"
+"order_items"	"FOREIGN KEY"	"order_items_order_id_fkey"	"FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE"
+"order_items"	"FOREIGN KEY"	"order_items_product_id_fkey"	"FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT"
+"order_items"	"CHECK"	"order_items_quantity_check"	"CHECK ((quantity > 0))"
+"order_items"	"CHECK"	"order_items_sale_price_check"	"CHECK ((sale_price > (0)::numeric))"
+"orders"	"стовпець"	"order_id"	"integer NOT NULL GENERATED AS IDENTITY"
+"orders"	"стовпець"	"ordered_at"	"timestamp without time zone NOT NULL"
+"orders"	"стовпець"	"status"	"text NOT NULL"
+"orders"	"стовпець"	"customer_id"	"integer NOT NULL"
+"orders"	"PRIMARY KEY"	"orders_pkey"	"PRIMARY KEY (order_id)"
+"orders"	"FOREIGN KEY"	"orders_customer_id_fkey"	"FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE RESTRICT"
+"orders"	"CHECK"	"orders_status_check"	"CHECK ((status = ANY (ARRAY['нове'::text, 'оплачене'::text, 'відправлене'::text, 'скасоване'::text])))"
+"products"	"стовпець"	"product_id"	"integer NOT NULL GENERATED AS IDENTITY"
+"products"	"стовпець"	"article"	"text NOT NULL"
+"products"	"стовпець"	"product_name"	"text NOT NULL"
+"products"	"стовпець"	"price"	"numeric NOT NULL"
+"products"	"стовпець"	"stock_quantity"	"integer NOT NULL"
+"products"	"стовпець"	"brand_id"	"integer NOT NULL"
+"products"	"стовпець"	"category_id"	"integer NOT NULL"
+"products"	"PRIMARY KEY"	"products_pkey"	"PRIMARY KEY (product_id)"
+"products"	"UNIQUE"	"products_article_key"	"UNIQUE (article)"
+"products"	"FOREIGN KEY"	"products_brand_id_fkey"	"FOREIGN KEY (brand_id) REFERENCES brands(brand_id) ON DELETE RESTRICT"
+"products"	"FOREIGN KEY"	"products_category_id_fkey"	"FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE RESTRICT"
+"products"	"CHECK"	"products_price_check"	"CHECK ((price > (0)::numeric))"
+"products"	"CHECK"	"products_stock_quantity_check"	"CHECK ((stock_quantity >= 0))"
+"suppliers"	"стовпець"	"supplier_id"	"integer NOT NULL GENERATED AS IDENTITY"
+"suppliers"	"стовпець"	"supplier_name"	"text NOT NULL"
+"suppliers"	"стовпець"	"contact_phone"	"text NOT NULL"
+"suppliers"	"PRIMARY KEY"	"suppliers_pkey"	"PRIMARY KEY (supplier_id)"
+"supplies"	"стовпець"	"supply_id"	"integer NOT NULL GENERATED AS IDENTITY"
+"supplies"	"стовпець"	"supply_date"	"date NOT NULL"
+"supplies"	"стовпець"	"supplier_id"	"integer NOT NULL"
+"supplies"	"PRIMARY KEY"	"supplies_pkey"	"PRIMARY KEY (supply_id)"
+"supplies"	"FOREIGN KEY"	"supplies_supplier_id_fkey"	"FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id) ON DELETE RESTRICT"
+"supply_items"	"стовпець"	"supply_item_id"	"integer NOT NULL GENERATED AS IDENTITY"
+"supply_items"	"стовпець"	"quantity"	"integer NOT NULL"
+"supply_items"	"стовпець"	"purchase_price"	"numeric NOT NULL"
+"supply_items"	"стовпець"	"supply_id"	"integer NOT NULL"
+"supply_items"	"стовпець"	"product_id"	"integer NOT NULL"
+"supply_items"	"PRIMARY KEY"	"supply_items_pkey"	"PRIMARY KEY (supply_item_id)"
+"supply_items"	"FOREIGN KEY"	"supply_items_product_id_fkey"	"FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT"
+"supply_items"	"FOREIGN KEY"	"supply_items_supply_id_fkey"	"FOREIGN KEY (supply_id) REFERENCES supplies(supply_id) ON DELETE CASCADE"
+"supply_items"	"CHECK"	"supply_items_purchase_price_check"	"CHECK ((purchase_price > (0)::numeric))"
+"supply_items"	"CHECK"	"supply_items_quantity_check"	"CHECK ((quantity > 0))"
 ```
 
-Після виконання файлів down: результат порожній / що лишилося.
+Після виконання файлів down: після down результат порожній;
 
-Після повторного виконання файлів up: результат збігається з першим / чим відрізняється.
+Після повторного виконання файлів up: результат збігається з першим;
 
-Висновок звірки з діаграмою розділу 6: ...
+Висновок звірки з діаграмою розділу 6: таблиці, стовпці, типи, ключі й реакції на видалення збігаються з діаграмою розділу 6.
+
+Результат перевірки схеми містить 9 таблиць, 34 стовпці, 9 первинних ключів, 8 зовнішніх ключів з явним ON DELETE (6 RESTRICT і 2 CASCADE), 2 обмеження UNIQUE і 7 обмежень CHECK. Назви таблиць і стовпців, типи, ключі та звʼязки збігаються з діаграмою розділу 6, рядків «УВАГА» немає; таблиці також відповідають сутностям ER-моделі розділу 3. Після down результат порожній, після повторного up він збігається з першим.
