@@ -309,11 +309,13 @@ dbsa-postgres-1   postgres:18.6   "docker-entrypoint.s…"   postgres   2 days a
 
 | № | Правило | Обмеження | Повідомлення СУБД |
 |---|---|---|---|
-| 1 | ... | NOT NULL | `ERROR: null value in column ...` |
-| 2 | ... | UNIQUE | `ERROR: duplicate key value violates unique constraint ...` |
-| 3 | ... | CHECK | `ERROR: new row for relation ... violates check constraint ...` |
-| 4 | ... | REFERENCES | `ERROR: insert or update on table ... violates foreign key constraint ...` |
-| 5 | ... | PRIMARY KEY | `ERROR: duplicate key value violates unique constraint ..._pkey` |
+| 1 | Замовлення без клієнта не створюється | NOT NULL | `ERROR: null value in column "customer_id" of relation "orders" violates not-null constraint` |
+| 2 | Email клієнта не повторюється | UNIQUE | `ERROR: duplicate key value violates unique constraint "customers_email_key"` |
+| 3 | Ціна товару більша за нуль | CHECK | `ERROR: new row for relation "products" violates check constraint "products_price_check"` |
+| 4 | Статус замовлення з дозволеного переліку | CHECK | `ERROR: new row for relation "orders" violates check constraint "orders_status_check"` |
+| 5 | Замовлення посилається на існуючого клієнта | REFERENCES | `ERROR: insert or update on table "orders" violates foreign key constraint "orders_customer_id_fkey"` |
+| 6 | Первинний ключ бренду не повторюється | PRIMARY KEY | `ERROR: duplicate key value violates unique constraint "brands_pkey"` |
+
 
 ## 10. Цикл up - down - up
 
